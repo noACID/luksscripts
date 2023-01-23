@@ -1,0 +1,14 @@
+#!/bin/sh
+
+if [ -f ".tpm2-getkey.tmp" ]; then
+# tmp file exists, meaning we tried the TPM this boot, but it didn’t work for the drive and this must be the second
+# or later pass for the drive. Either the TPM is failed/missing, or has the wrong key stored in it.
+#/lib/cryptsetup/askpass "Automatic disk unlock via TPM failed for  () Enter passphrase: "
+/usr/local/bin/luksunlockusb
+exit
+fi
+# No tmp, so it is the first time trying the script. Create a tmp file and try the TPM
+touch .tpm2-getkey.tmp
+
+tpm2_nvread 0x1500016
+EOF
